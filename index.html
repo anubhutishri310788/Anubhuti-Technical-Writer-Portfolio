@@ -28,7 +28,7 @@
       <li><a href="#contact" class="toc__link"><svg class="toc__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3.5" y="5.5" width="17" height="13" rx="1.5"/><path d="m4.5 7 7.5 6 7.5-6"/></svg>04 — Contact</a></li>
     </ol>
     <div class="toc__meta">
-      <span>Pune, India</span>
+      <span>Anubhuti, Pune, India</span>
       <span>Available for work</span>
     </div>
   </nav>
@@ -48,100 +48,96 @@
     </header>
 
     <section id="about" class="doc__section">
-      <h2><svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c1.5-4 5-6 7.5-6s6 2 7.5 6"/></svg><span class="num">01</span> About</h2>
-      <p class="lede"><p>I help technical teams communicate complex changes through clear, user-centered documentation. Release notes, migration guides, and API documentation for SaaS platforms.</p>
-      <p>I am Anubhuti Shrivastava, a technical writer with 4+ years of experience in creating clear, user-centered documentation. I write documentation that actually gets read—and used. With 4+ years as a Technical Communication Lead at Persistent Systems, I've learned that great docs aren't about explaining every feature; they're about solving user problems. My specialty? Translating complex technical changes into clarity. I've built release notes that reduced support tickets by 40%, migration guides that kept teams on schedule, and API docs that developers bookmark. Whether it's a breaking change, a new feature launch, or onboarding challenges, I focus on one thing: making your users successful. I work across SaaS and cloud platforms, specializing in APIs, microservices, and user-centered documentation using docs-as-code workflows. If you need someone who understands both the technical depth and the human side of communication, let's talk.</p>
+      <h2><svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="20" height="20"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c1.5-4 5-6 7.5-6s6 2 7.5 6"/></svg><span class="num">01</span> About</h2>
+      <p class="lede">I write documentation that actually gets read—and used.</p>
+      <p>With 4+ years as a Technical Communication Lead at Persistent Systems, I've learned that great docs aren't about explaining every feature; they're about solving user problems. My specialty? Translating complex technical changes into clarity.</p>
+      <p>I've built release notes that reduced support tickets by 40%, migration guides that kept teams on schedule, and API docs that developers bookmark. Whether it's a breaking change, a new feature launch, or onboarding challenges, I focus on one thing: making your users successful.</p>
+      <p>I work across SaaS and cloud platforms, specializing in APIs, microservices, and user-centered documentation using docs-as-code workflows. If you need someone who understands both the technical depth and the human side of communication, let's talk.</p>
     </section>
 
     <section id="work" class="doc__section">
-      <h2><svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3.5" y="7.5" width="17" height="12" rx="1.5"/><path d="M8.5 7.5V6a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v1.5"/></svg><span class="num">02</span> Work</h2>
-
-      <!-- Category filter — edit the label/data-filter pairs to match your own categories.
-           "All" is required; every other button's data-filter must match an
-           entry's data-category exactly (case-sensitive). -->
+      <h2><svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="20" height="20"><rect x="3.5" y="7.5" width="17" height="12" rx="1.5"/><path d="M8.5 7.5V6a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v1.5"/></svg><span class="num">02</span> Work</h2>
+ 
       <div class="filter-bar" role="tablist" aria-label="Filter work samples by category">
         <button class="filter-chip is-active" data-filter="all" role="tab" aria-selected="true">All</button>
+        <button class="filter-chip" data-filter="release-notes" role="tab" aria-selected="false">Release Notes</button>
+        <button class="filter-chip" data-filter="migration-guides" role="tab" aria-selected="false">Migration Guides</button>
         <button class="filter-chip" data-filter="api-docs" role="tab" aria-selected="false">API Docs</button>
-        <button class="filter-chip" data-filter="docs-as-code" role="tab" aria-selected="false">Docs-as-Code</button>
-        <button class="filter-chip" data-filter="content-strategy" role="tab" aria-selected="false">Content Strategy</button>
       </div>
 
-      <div class="entry-list">
-        <!-- Duplicate an .entry block per sample. data-category must match one
-             of the data-filter values above. The link should point straight
-             at the sample file — a hosted doc page, a PDF, or a file in this
-             same repo (e.g. "samples/api-reference.pdf"). -->
+        <div class="entry-list">
+        
+        <article class="entry" data-category="release-notes">
+          <div class="entry__head">
+            <h3>DataFlow v2.5 Release Notes</h3>
+            <span class="entry__date">2024</span>
+          </div>
+          <span class="entry__tag">Release Notes</span>
+          <p>Documented new webhook event delivery system and API v1 deprecation timeline. Highlighted integration benefits and provided migration checklist to reduce support requests by 40%.</p>
+          <a class="entry__link" href="release-notes-v2-5.html">Read the docs →</a>
+        </article>
+ 
+        <article class="entry" data-category="release-notes">
+          <div class="entry__head">
+            <h3>DataFlow v3.0 Release Notes</h3>
+            <span class="entry__date">2024</span>
+          </div>
+          <span class="entry__tag">Release Notes</span>
+          <p>Communicated breaking changes in pipeline transformation syntax and introduced new built-in functions. Structured release notes to prioritize user impact and provided side-by-side syntax comparisons.</p>
+          <a class="entry__link" href="release-notes-v3-0.html">Read the docs →</a>
+        </article>
+ 
+        <article class="entry" data-category="migration-guides">
+          <div class="entry__head">
+            <h3>DataFlow v2→v3 Migration Guide</h3>
+            <span class="entry__date">2024</span>
+          </div>
+          <span class="entry__tag">Migration Guide</span>
+          <p>Step-by-step migration guide with UX callouts for non-technical stakeholders. Included testing checklist, rollback procedures, and expected downtime estimates. Reduced migration-related support tickets by 60%.</p>
+          <a class="entry__link" href="migration-guide-v2-to-v3.html">Read the docs →</a>
+        </article>
+ 
         <article class="entry" data-category="api-docs">
           <div class="entry__head">
-            <h3>Tech Writer's Tribe</h3>
-            <span class="entry__date">2020</span>
+            <h3>DataFlow Webhooks API Reference</h3>
+            <span class="entry__date">2024</span>
           </div>
           <span class="entry__tag">API Docs</span>
-          <p>Having trained more than 1,000 professionals in technical documentation, Punit helps writers build practical, hands-on skills so they can earn jobs and respect on their own terms — with 23+ years in writing, including two decades in technical documentation and leadership of multiple documentation teams.</p>
-          <a class="entry__link" href="https://techwriterstribe.com/twt_ws_gitpages/">Read the docs →</a>
+          <p>Complete webhook API reference with event payload schemas, authentication methods, and retry logic. Included practical examples, error handling guide, and troubleshooting section for developers.</p>
+          <a class="entry__link" href="api-webhooks.html">Read the docs →</a>
         </article>
-
-        <article class="entry" data-category="docs-as-code">
-          <div class="entry__head">
-            <h3>Company 2</h3>
-            <span class="entry__date">2017</span>
-          </div>
-          <span class="entry__tag">Docs-as-Code</span>
-          <p>Having trained more than 1,000 professionals in technical documentation, Punit helps writers build practical, hands-on skills so they can earn jobs and respect on their own terms — with 23+ years in writing, including two decades in technical documentation and leadership of multiple documentation teams.</p>
-          <a class="entry__link" href="https://techwriterstribe.com/twt_ws_gitpages/">Read the docs →</a>
-        </article>
-
-        <article class="entry" data-category="content-strategy">
-          <div class="entry__head">
-            <h3>Company 3</h3>
-            <span class="entry__date"2016</span>
-          </div>
-          <span class="entry__tag">Content Strategy</span>
-          <p>Having trained more than 1,000 professionals in technical documentation, Punit helps writers build practical, hands-on skills so they can earn jobs and respect on their own terms — with 23+ years in writing, including two decades in technical documentation and leadership of multiple documentation teams.</p>
-          <a class="entry__link" href="https://techwriterstribe.com/twt_ws_gitpages/">Read the docs →</a>
-        </article>
+ 
       </div>
-
-      <p class="filter-empty" hidden>No samples in this category yet.</p>
-    </section>
-
-    <section id="skills" class="doc__section">
-      <h2><svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 7h6M4 12h10M4 17h7"/><circle cx="14" cy="7" r="1.6"/><circle cx="17" cy="17" r="1.6"/></svg><span class="num">03</span> Skills</h2>
+ 
+        <section id="skills" class="doc__section">
+      <h2><svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="20" height="20"><path d="M4 7h6M4 12h10M4 17h7"/><circle cx="14" cy="7" r="1.6"/><circle cx="17" cy="17" r="1.6"/></svg><span class="num">03</span> Skills</h2>
       <div class="skills-table">
         <div class="skills-row">
           <span class="skills-row__label">Writing</span>
-          <span>[API reference, tutorials, release notes, style guides]</span>
+          <span>Release notes • Migration guides • API documentation • User guides • UX content • Changelogs</span>
         </div>
         <div class="skills-row">
           <span class="skills-row__label">Tooling</span>
-          <span>[Docusaurus, MkDocs, Git, Markdown, reST]</span>
+          <span>Markdown • Git • Docusaurus • VS Code • Claude AI • GitHub Pages • Figma</span>
         </div>
         <div class="skills-row">
-          <span class="skills-row__label">Adjacent</span>
-          <span>[Basic HTML/CSS, OpenAPI, Figma]</span>
+          <span class="skills-row__label">Approach</span>
+          <span>Docs-as-code • User-centered design • Reducing support friction • Technical precision • User empathy</span>
         </div>
       </div>
     </section>
 
-    <section id="contact" class="doc__section">
-      <h2><svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3.5" y="5.5" width="17" height="13" rx="1.5"/><path d="m4.5 7 7.5 6 7.5-6"/></svg><span class="num">04</span> Contact</h2>
+     <section id="contact" class="doc__section">
+      <h2><svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="20" height="20"><rect x="3.5" y="5.5" width="17" height="13" rx="1.5"/><path d="m4.5 7 7.5 6 7.5-6"/></svg><span class="num">04</span> Contact</h2>
       <p class="lede">Open to opportunities — reach out.</p>
-
+ 
       <div class="contact-links">
-        <a href="mailto:newsletter.twt@gmail.com">newsletter.twt@gmail.com</a>
-        <a href="https://www.linkedin.com/company/tech-writers-tribe/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-        <a href="https://github.com/TW-Tribe" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href="mailto:anubhuti.shrivastava@gmail.com">anubhuti.shrivastava@gmail.com</a>
+        <a href="https://www.linkedin.com/in/anubhutishri/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        <a href="https://github.com/anubhutishri310788" target="_blank" rel="noopener noreferrer">GitHub</a>
       </div>
-
-      <!-- Contact form: GitHub Pages only serves static files, it can't
-           process form submissions on its own. This form is wired for
-           Formspree (free tier, no backend needed):
-             1. Sign up at formspree.io and create a form
-             2. Replace YOUR_FORM_ID below with the ID Formspree gives you
-             3. Submissions land in your Formspree inbox / forward to email
-           Swap the action URL for any other form service the same way
-           (Netlify Forms, Getform, etc.) if you prefer. -->
-      <form class="contact-form" action="https://formspree.io/f/xzepazeb" method="POST">
+ 
+      <form class="contact-form" action="https://formspree.io/f/xeajbzvd" method="POST">
         <div class="form-row">
           <label for="cf-name">Name</label>
           <input id="cf-name" name="name" type="text" required>
@@ -157,14 +153,7 @@
         <button type="submit" class="btn-submit">Send message</button>
       </form>
     </section>
-
-    <footer class="doc__footer">
-      <span>TWT · last updated August 2026</span>
-    </footer>
-
-  </main>
-</div>
-
+      
 <script>
   // Highlight the current section in the sidebar TOC as the reader scrolls
   const links = document.querySelectorAll('.toc__link');
