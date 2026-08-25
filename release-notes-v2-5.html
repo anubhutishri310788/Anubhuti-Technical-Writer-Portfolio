@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DataFlow v2.5 Release Notes</title>
+<style>
+ body {
+ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+ line-height: 1.6;
+ color: #333;
+ max-width: 900px;
+ margin: 0 auto;
+ padding: 2rem;
+ background: #f9f9f9;
+ }
+ h1, h2 { color: #2451C4; }
+ .note { background: #e8f0ff; border-left: 4px solid #2451C4; padding: 1rem; margin: 1rem 0; }
+ .warning { background: #fff3cd; border-left: 4px solid #ff9800; padding: 1rem; margin: 1rem 0; }
+ .success { background: #d4edda; border-left: 4px solid #28a745; padding: 1rem; margin: 1rem 0; }
+ code { background: #f5f5f5; padding: 0.2rem 0.4rem; border-radius: 3px; font-family: 'Courier New', monospace; }
+ .feature { margin: 1.5rem 0; }
+ a { color: #2451C4; }
+</style>
+</head>
+<body>
+
+<h1>DataFlow v2.5 Release Notes</h1>
+<p><strong>Released:</strong> August 15, 2024 | <strong>Version:</strong> 2.5.0</p>
+
+<div class="note">
+ <strong>📌 Highlights:</strong> Webhook event delivery, improved error handling, API v1 deprecation notice
+</div>
+
+---
+
+<h2>What's New</h2>
+
+<div class="feature">
+ <h3>✨ Webhook Event Delivery System</h3>
+ <p>You can now receive real-time pipeline events directly to your infrastructure via webhooks. Subscribe to events like <code>pipeline.completed</code>, <code>pipeline.failed</code>, and <code>job.error</code>.</p>
+ <p><strong>Use cases:</strong></p>
+ <ul>
+ <li>Trigger downstream processes when pipelines complete</li>
+ <li>Send alerts to Slack, PagerDuty, or custom monitoring systems</li>
+ <li>Log events to your data warehouse for compliance audits</li>
+ </ul>
+ <p><a href="api-webhooks.html">View Webhooks API Reference →</a></p>
+</div>
+
+<div class="feature">
+ <h3>🔒 Enhanced Error Handling & Retry Logic</h3>
+ <p>Webhook events now include automatic retry with exponential backoff. Failed deliveries are logged and retried up to 5 times over 24 hours.</p>
+ <p><strong>New fields in webhook payloads:</strong></p>
+ <ul>
+ <li><code>timestamp</code> — ISO 8601 event timestamp</li>
+ <li><code>attempt</code> — Delivery attempt number (1-5)</li>
+ <li><code>error_code</code> — Specific error classification</li>
+ <li><code>context</code> — Additional debugging information</li>
+ </ul>
+</div>
+
+<div class="feature">
+ <h3>📊 Improved Pipeline Monitoring Dashboard</h3>
+ <p>New widgets show webhook delivery status, failure rates, and latency metrics in real time. Filter by event type or pipeline name.</p>
+</div>
+
+---
+
+<h2>Improvements & Bug Fixes</h2>
+
+<ul>
+ <li><strong>Fixed:</strong> Memory leak in long-running pipeline jobs (impacts pipelines with >100 steps)</li>
+ <li><strong>Improved:</strong> Dashboard performance by 30% for large dataset views (>50,000 rows)</li>
+ <li><strong>Fixed:</strong> Incorrect timestamp display in audit logs for UTC+5:30 timezones</li>
+ <li><strong>Improved:</strong> Error messages now include actionable troubleshooting steps</li>
+</ul>
+
+---
+
+<h2>⚠️ API v1 Deprecation Notice</h2>
+
+<div class="warning">
+ <strong>Action Required by February 15, 2025</strong>
+ <p>The DataFlow API v1 will be retired on <strong>February 15, 2025</strong>. All applications using the v1 endpoint must migrate to API v2 before this date.</p>
+</div>
+
+<h3>Timeline</h3>
+<ul>
+ <li><strong>August 15, 2024 (Today):</strong> API v1 enters "sunset" phase. New features only in v2.</li>
+ <li><strong>November 15, 2024:</strong> API v1 support reduced to critical security fixes only.</li>
+ <li><strong>February 15, 2025:</strong> API v1 fully retired. All requests return 410 Gone.</li>
+</ul>
+
+<h3>What Changes?</h3>
+
+<p><strong>v1 Endpoint (deprecated):</strong></p>
+<code>POST https://api.dataflow.io/v1/pipelines/run</code>
+
+<p><strong>v2 Endpoint (use this):</strong></p>
+<code>POST https://api.dataflow.io/v2/pipelines/{id}/executions</code>
+
+<h3>How to Migrate</h3>
+
+<p>Request body changes:</p>
+<pre><code>// v1 (old)
+{
+  "pipeline_id": "pipe_123",
+  "params": {"key": "value"}
+}
+
+// v2 (new)
+{
+  "variables": {"key": "value"},
+  "timeout_minutes": 60
+}</code></pre>
+
+<div class="success">
+ <p><strong>Migration Guide:</strong> See <a href="migration-guide-v2-to-v3.html">DataFlow Migration Guide</a> for step-by-step instructions.</p>
+</div>
+
+---
+
+<h2>Known Issues</h2>
+
+<ul>
+ <li><strong>Webhook Delivery Delay:</strong> Events may be delayed 2-5 minutes during peak usage hours (3-4 PM UTC). We're working on a fix for v2.6.</li>
+ <li><strong>UI Glitch:</strong> Webhook retry logs may not display if browser cache is not cleared. Workaround: Hard refresh (Ctrl+Shift+R).</li>
+</ul>
+
+---
+
+<h2>Support & Feedback</h2>
+
+<p><strong>Questions?</strong> Reach out to our support team:</p>
+<ul>
+ <li>📧 <a href="mailto:support@dataflow.io">support@dataflow.io</a></li>
+ <li>💬 <a href="#">Community Slack</a></li>
+ <li>📚 <a href="#">API Documentation</a></li>
+</ul>
+
+<p><em>Released by Anubhuti Shrivastava, Technical Writer. Last updated August 15, 2024.</em></p>
+
+</body>
+</html>

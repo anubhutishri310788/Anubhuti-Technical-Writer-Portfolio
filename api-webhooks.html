@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DataFlow Webhooks API Reference</title>
+<style>
+ body {
+ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+ line-height: 1.6;
+ color: #333;
+ max-width: 1000px;
+ margin: 0 auto;
+ padding: 2rem;
+ background: #f9f9f9;
+ }
+ h1, h2, h3 { color: #2451C4; }
+ .endpoint { background: white; border-left: 4px solid #2451C4; padding: 1rem; margin: 1.5rem 0; border-radius: 4px; }
+ .method-post { border-left-color: #28a745; }
+ .method-get { border-left-color: #0066cc; }
+ .method-badge { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 3px; font-weight: bold; font-size: 0.85rem; margin-right: 0.5rem; }
+ .badge-post { background: #28a745; color: white; }
+ .badge-get { background: #0066cc; color: white; }
+ .code-block { background: #f5f5f5; border: 1px solid #ddd; border-radius: 4px; padding: 1rem; margin: 1rem 0; overflow-x: auto; }
+ .response-box { background: #e8f4f8; border-left: 4px solid #0066cc; padding: 1rem; margin: 1rem 0; }
+ .error-box { background: #f8d7da; border-left: 4px solid #dc3545; padding: 1rem; margin: 1rem 0; }
+ .schema { background: white; border: 1px solid #ddd; border-radius: 4px; padding: 1rem; margin: 1rem 0; }
+ .schema-field { margin: 0.5rem 0; padding: 0.5rem; background: #f9f9f9; border-radius: 3px; }
+ code { background: #f5f5f5; padding: 0.2rem 0.4rem; border-radius: 3px; font-family: monospace; }
+ table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+ th, td { padding: 0.75rem; text-align: left; border-bottom: 1px solid #ddd; }
+ th { background: #f5f5f5; font-weight: bold; }
+ a { color: #2451C4; text-decoration: none; }
+ a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<h1>DataFlow Webhooks API Reference</h1>
+<p><strong>API Version:</strong> v2.5+ | <strong>Last Updated:</strong> October 2024</p>
+
+<div style="background: #e8f0ff; border-left: 4px solid #2451C4; padding: 1rem; margin-bottom: 2rem; border-radius: 4px;">
+ <strong>What are webhooks?</strong> Receive real-time notifications about pipeline events (success, failure, completion) delivered to your infrastructure. No polling required.
+</div>
+
+---
+
+<h2>Authentication</h2>
+
+<p>All webhook requests require an API key in the <code>Authorization</code> header:</p>
+
+<div class="code-block">
+<pre><code>Authorization: Bearer sk_live_YOUR_API_KEY</code></pre>
+</div>
+
+<p><strong>How to generate an API key:</strong></p>
+<ol>
+ <li>Log in to DataFlow dashboard</li>
+ <li>Go to Settings → API Keys</li>
+ <li>Click "Generate Key"</li>
+ <li>Copy and store securely (never commit to version control)</li>
+</ol>
+
+<p><strong>Security best practices:</strong></p>
+<ul>
+ <li>Rotate API keys every 90 days</li>
+ <li>Use separate keys for production and staging</li>
+ <li>Revoke keys immediately if compromised</li>
+ <li>Never log or display API keys in error messages</li>
+</ul>
+
+---
+
+<h2>Webhooks</h2>
+
+<h3>Register a Webhook</h3>
+
+<div class="endpoint method-post">
+ <span class="method-badge badge-post">POST</span>
+ <code>/v2/webhooks</code>
+ <p>Subscribe to pipeline events. Choose which events trigger your webhook.</p>
+</div>
+
+<h4>Request</h4>
+
+<div class="code-block">
+<pre><code>POST https://api.dataflow.io/v2/webhooks
+Authorization: Bearer sk_live_YOUR_API_KEY
+Content-Type: application/json
+
+{
+  "url": "https://yourapp.com/webhooks/dataflow",
+  "events": ["pipeline.completed", "pipeline.failed"],
+  "description": "Production alerts webhook"
+}</code></pre>
+</div>
+
+<h4>Request Body Parameters</h4>
+
+<table>
+ <tr>
+ <th>Field</th>
+ <th>Type</th>
+ <th>Required</th>
+ <th>Description</th>
+ </tr>
+ <tr>
+ <td><code>url</code></td>
+ <td>string</td>
+ <td>Yes</td>
+ <td>HTTPS endpoint where events will be delivered. Must be publicly accessible.</td>
+ </tr>
+ <tr>
+ <td><code>events</code></td>
+ <td>array</td>
+ <td>Yes</td>
+ <td>List of events to subscribe to. See <a href="#events">Webhook Events</a> section.</td>
+ </tr>
+ <tr>
+ <td><code>description</code></td>
+ <td>string</td>
+ <td>No</td>
+ <td>Human-readable name for your webhook (e.g., "Slack alerts", "Email notifications")</td>
+ </tr>
+ <tr>
+ <td><code>active</code></td>
+ <td>boolean</td>
+ <td>No</td>
+ <td>Default: true. Set to false to temporarily disable without deleting.</td>
+ </tr>
+</table>
+
+<h4>Response (201 Created)</h4>
+
+<div class="response-box">
+<pre><code>{
+  "id": "wh_live_abcd1234efgh5678",
+  "url": "https://yourapp.com/webhooks/dataflow",
+  "events": ["pipeline.completed", "pipeline.failed"],
+  "description": "Production alerts webhook",
+  "active": true,
+  "created_at": "2024-10-01T14:30:00Z",
+  "secret": "whsec_live_xyz123"
+}</code></pre>
+</div>
+
+<p><strong>⚠️ Important:</strong> Store the <code>secret</code> value securely. Use it to verify webhook signatures (see <a href="#verification">Webhook Verification</a>).</p>
+
+---
+
+<h3 id="events">Webhook Events</h3>
+
+<h4>Supported Events</h4>
+
+<table>
+ <tr>
+ <th>Event</th>
+ <th>Trigger</th>
+ <th>Payload Includes</th>
+ </tr>
+ <tr>
+ <td><code>pipeline.created</code></td>
+ <td>New pipeline defined</td>
+ <td>Pipeline ID, name, version</td>
+ </tr>
+ <tr>
+ <td><code>pipeline.started</code></td>
+ <td>Pipeline execution begins</td>
+ <td>Pipeline ID, execution ID, start time</td>
+ </tr>
+ <tr>
+ <td><code>pipeline.completed</code></td>
+ <td>Pipeline finished successfully</td>
+ <td>Pipeline ID, execution ID, duration, row counts</td>
+ </tr>
+ <tr>
+ <td><code>pipeline.failed</code></td>
+ <td>Pipeline errored</td>
+ <td>Pipeline ID, execution ID, error message, step number</td>
+ </tr>
+ <tr>
+ <td><code>job.warning</code></td>
+ <td>Non-critical issue detected</td>
+ <td>Pipeline ID, warning message, affected rows</td>
+ </tr>
+</table>
+
+---
+
+<h3>Webhook Event Payload</h3>
+
+<h4>Example: <code>pipeline.completed</code> Event</h4>
+
+<div class="code-block">
+<pre><code>{
+  "id": "evt_live_xyz789",
+  "type": "pipeline.completed",
+  "timestamp": "2024-10-01T14:35:22Z",
+  "attempt": 1,
+  "data": {
+    "pipeline_id": "pipe_live_abc123",
+    "pipeline_name": "customer_sync",
+    "execution_id": "exec_live_def456",
+    "status": "succeeded",
+    "duration_seconds": 127,
+    "rows_read": 5432,
+    "rows_written": 5401,
+    "rows_skipped": 31,
+    "started_at": "2024-10-01T14:33:15Z",
+    "completed_at": "2024-10-01T14:35:22Z"
+  }
+}</code></pre>
+</div>
+
+<h4>Event Payload Schema</h4>
+
+<div class="schema">
+ <div class="schema-field">
+ <strong><code>id</code></strong> (string) — Unique event ID. Use to deduplicate if you receive duplicates.
+ </div>
+ <div class="schema-field">
+ <strong><code>type</code></strong> (string) — Event type (e.g., "pipeline.completed")
+ </div>
+ <div class="schema-field">
+ <strong><code>timestamp</code></strong> (ISO 8601) — When the event occurred
+ </div>
+ <div class="schema-field">
+ <strong><code>attempt</code></strong> (integer) — Delivery attempt (1-5). Indicates retries.
+ </div>
+ <div class="schema-field">
+ <strong><code>data</code></strong> (object) — Event-specific details (structure varies by event type)
+ </div>
+</div>
+
+---
+
+<h3 id="verification">Webhook Verification</h3>
+
+<p>Verify webhook signatures to ensure events come from DataFlow (not malicious sources).</p>
+
+<h4>Verification Steps</h4>
+
+<ol>
+ <li>Retrieve the <code>X-DataFlow-Signature</code> header from the request</li>
+ <li>Combine <code>timestamp</code> (from payload) + webhook secret</li>
+ <li>Compute HMAC-SHA256 hash</li>
+ <li>Compare with signature header</li>
+</ol>
+
+<h4>Python Example</h4>
+
+<div class="code-block">
+<pre><code>import hmac
+import hashlib
+import json
+
+def verify_webhook(request_body, signature_header, webhook_secret):
+    """Verify DataFlow webhook signature"""
+    
+    # Parse JSON payload
+    payload = json.loads(request_body)
+    timestamp = payload['timestamp']
+    
+    # Create signed message
+    signed_content = f"{timestamp}.{request_body}"
+    
+    # Compute HMAC-SHA256
+    expected_signature = hmac.new(
+        webhook_secret.encode(),
+        signed_content.encode(),
+        hashlib.sha256
+    ).hexdigest()
+    
+    # Verify match
+    return hmac.compare_digest(
+        signature_header,
+        f"sha256={expected_signature}"
+    )
+
+# Usage
+is_valid = verify_webhook(
+    request_body='{"type":"pipeline.completed",...}',
+    signature_header='sha256=abc123...',
+    webhook_secret='whsec_live_xyz123'
+)</code></pre>
+</div>
+
+---
+
+<h3>Retry Logic & Delivery Guarantees</h3>
+
+<p>DataFlow retries failed deliveries automatically:</p>
+
+<table>
+ <tr>
+ <th>Attempt</th>
+ <th>Delay</th>
+ <th>Triggers On</th>
+ </tr>
+ <tr>
+ <td>1</td>
+ <td>Immediate</td>
+ <td>Event occurs</td>
+ </tr>
+ <tr>
+ <td>2</td>
+ <td>5 seconds</td>
+ <td>Timeout, 5xx error, or connection failure</td>
+ </tr>
+ <tr>
+ <td>3</td>
+ <td>1 minute</td>
+ <td>Same failure conditions</td>
+ </tr>
+ <tr>
+ <td>4</td>
+ <td>10 minutes</td>
+ <td>Same failure conditions</td>
+ </tr>
+ <tr>
+ <td>5</td>
+ <td>1 hour</td>
+ <td>Final attempt before giving up</td>
+ </tr>
+</table>
+
+<p><strong>Your endpoint must:</strong></p>
+<ul>
+ <li>Return <code>200 OK</code> within 30 seconds</li>
+ <li>Accept <code>POST</code> requests with JSON body</li>
+ <li>Be publicly accessible (HTTPS only)</li>
+ <li>Handle duplicate events (same <code>id</code>) gracefully</li>
+</ul>
+
+---
+
+<h2>Error Handling</h2>
+
+<h3>HTTP Status Codes</h3>
+
+<table>
+ <tr>
+ <th>Status</th>
+ <th>Meaning</th>
+ <th>What to Do</th>
+ </tr>
+ <tr>
+ <td><code>400</code></td>
+ <td>Bad Request</td>
+ <td>Check your request body for syntax errors</td>
+ </tr>
+ <tr>
+ <td><code>401</code></td>
+ <td>Unauthorized</td>
+ <td>Verify API key is valid and included in header</td>
+ </tr>
+ <tr>
+ <td><code>404</code></td>
+ <td>Not Found</td>
+ <td>Webhook doesn't exist or already deleted</td>
+ </tr>
+ <tr>
+ <td><code>429</code></td>
+ <td>Rate Limited</td>
+ <td>Wait before retrying (limit: 100 requests/minute)</td>
+ </tr>
+ <tr>
+ <td><code>500</code></td>
+ <td>Server Error</td>
+ <td>Retry later. Check status.dataflow.io for incidents.</td>
+ </tr>
+</table>
+
+<h3>Error Response Example</h3>
+
+<div class="error-box">
+<pre><code>{
+  "error": {
+    "code": "invalid_event_type",
+    "message": "Event type 'pipeline.unknown' is not supported",
+    "details": {
+      "valid_events": [
+        "pipeline.created",
+        "pipeline.completed",
+        "pipeline.failed"
+      ]
+    }
+  }
+}</code></pre>
+</div>
+
+---
+
+<h2>Troubleshooting</h2>
+
+<h3>Webhooks not delivering</h3>
+<p><strong>Check:</strong> Is your endpoint HTTPS? Is it publicly accessible? Try accessing it from a browser. Verify API key is valid.</p>
+
+<h3>Receiving duplicate events</h3>
+<p><strong>Solution:</strong> Store processed event IDs and skip duplicates. DataFlow may retry if your endpoint times out or returns an error.</p>
+
+<h3>Signature verification failing</h3>
+<p><strong>Check:</strong> Are you using the correct webhook secret? Is your timestamp parsing accurate? Review Python example above.</p>
+
+---
+
+<h2>Rate Limits</h2>
+
+<ul>
+ <li><strong>API requests:</strong> 100 per minute per API key</li>
+ <li><strong>Webhook deliveries:</strong> No limit (events deliver as they occur)</li>
+ <li><strong>Webhooks per account:</strong> 50 maximum</li>
+</ul>
+
+<p>Contact support if you need higher limits.</p>
+
+---
+
+<h2>Support</h2>
+
+<ul>
+ <li>📚 <a href="#">Full API Documentation</a></li>
+ <li>💬 <a href="#">Community Slack: #webhooks</a></li>
+ <li>📧 <a href="mailto:support@dataflow.io">support@dataflow.io</a></li>
+</ul>
+
+<p><em>API Reference by Anubhuti Shrivastava, Technical Writer. Last updated October 2024.</em></p>
+
+</body>
+</html>

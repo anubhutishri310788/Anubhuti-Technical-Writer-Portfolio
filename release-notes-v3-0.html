@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DataFlow v3.0 Release Notes</title>
+<style>
+ body {
+ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+ line-height: 1.6;
+ color: #333;
+ max-width: 900px;
+ margin: 0 auto;
+ padding: 2rem;
+ background: #f9f9f9;
+ }
+ h1, h2 { color: #2451C4; }
+ .critical { background: #f8d7da; border-left: 4px solid #dc3545; padding: 1rem; margin: 1rem 0; }
+ .note { background: #e8f0ff; border-left: 4px solid #2451C4; padding: 1rem; margin: 1rem 0; }
+ .success { background: #d4edda; border-left: 4px solid #28a745; padding: 1rem; margin: 1rem 0; }
+ code { background: #f5f5f5; padding: 0.2rem 0.4rem; border-radius: 3px; font-family: 'Courier New', monospace; }
+ .comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; }
+ .old-syntax { background: #ffe8e8; padding: 0.5rem; border-radius: 4px; }
+ .new-syntax { background: #e8ffe8; padding: 0.5rem; border-radius: 4px; }
+ a { color: #2451C4; }
+</style>
+</head>
+<body>
+
+<h1>DataFlow v3.0 Release Notes</h1>
+<p><strong>Released:</strong> October 1, 2024 | <strong>Version:</strong> 3.0.0</p>
+
+<div class="critical">
+ <strong>⚠️ BREAKING CHANGES:</strong> Pipeline syntax has changed. You must update your existing pipelines before October 15, 2024. <a href="migration-guide-v2-to-v3.html">See Migration Guide →</a>
+</div>
+
+---
+
+<h2>Major Changes</h2>
+
+<h3>1. Pipeline Definition Syntax</h3>
+
+<p>We've simplified pipeline configuration to be more intuitive and reduce errors. The new YAML structure is cleaner and supports more complex scenarios.</p>
+
+<p><strong>Old Syntax (v2.x):</strong></p>
+<div class="old-syntax">
+<pre><code>pipeline:
+  name: "sync_customers"
+  steps:
+    - step_id: "extract"
+      type: "source"
+      source: "salesforce"
+    - step_id: "transform"
+      type: "transform"
+      transformer: "custom_mapper"</code></pre>
+</div>
+
+<p><strong>New Syntax (v3.0):</strong></p>
+<div class="new-syntax">
+<pre><code>pipeline:
+  name: sync_customers
+  steps:
+    - name: extract
+      type: source
+      config:
+        provider: salesforce
+    - name: transform
+      type: transform
+      config:
+        processor: custom_mapper</code></pre>
+</div>
+
+<p><strong>What Changed:</strong></p>
+<ul>
+ <li><code>step_id</code> → <code>name</code></li>
+ <li><code>source</code>, <code>transformer` properties moved under <code>config</code></li>
+ <li>All config values must use lowercase (no quotes needed for simple strings)</li>
+ <li><code>type</code> value changed: <code>"source"</code> is now <code>source</code></li>
+</ul>
+
+<div class="note">
+ <p><strong>🔄 Automated Migration:</strong> Run <code>dataflow migrate --from v2 --to v3</code> to auto-convert your pipelines. Manual review recommended.</p>
+</div>
+
+<h3>2. Transformation Functions Library Expansion</h3>
+
+<p>New built-in functions reduce custom code needs by 50%. Write less, do more.</p>
+
+<p><strong>New Functions:</strong></p>
+<ul>
+ <li><code>deduplicate(field, strategy)</code> — Remove duplicate rows by field values</li>
+ <li><code>flatten_json(field)</code> — Convert nested JSON to flat columns</li>
+ <li><code>date_diff(date1, date2, unit)</code> — Calculate date differences</li>
+ <li><code>mask_pii(field, pattern)</code> — Automatic PII masking (GDPR-compliant)</li>
+ <li><code>pivot(row_field, col_field, agg_func)</code> — Dynamic pivot tables</li>
+</ul>
+
+<h3>3. Error Handling & Validation</h3>
+
+<p>Pipelines now validate on save, not on run. Catch errors 5 minutes instead of 30 minutes into execution.</p>
+
+<ul>
+ <li>Schema validation against source systems happens immediately</li>
+ <li>Missing dependencies (tables, APIs) detected during syntax check</li>
+ <li>Detailed error messages with suggested fixes</li>
+</ul>
+
+---
+
+<h2>Performance Improvements</h2>
+
+<ul>
+ <li><strong>+40% faster:</strong> Parallel job execution across 8 cores (default). Configure with <code>parallelism: 16</code> for GPU instances.</li>
+ <li><strong>+25% memory efficient:</strong> Streaming transformations reduce peak memory by 25% for large datasets (>1GB).</li>
+ <li><strong>-60% latency:</strong> Webhook events deliver in <2 seconds (was 5+ seconds in v2.5).</li>
+</ul>
+
+---
+
+<h2>⚠️ What Breaks in v3.0</h2>
+
+<div class="critical">
+ <strong>Action Required by October 15, 2024</strong>
+</div>
+
+<table style="width: 100%; border-collapse: collapse;">
+ <tr style="background: #f0f0f0;">
+ <th style="padding: 0.5rem; text-align: left; border: 1px solid #ddd;"><strong>Feature</strong></th>
+ <th style="padding: 0.5rem; text-align: left; border: 1px solid #ddd;"><strong>v2.x Behavior</strong></th>
+ <th style="padding: 0.5rem; text-align: left; border: 1px solid #ddd;"><strong>v3.0 Behavior</strong></th>
+ </tr>
+ <tr>
+ <td style="padding: 0.5rem; border: 1px solid #ddd;">Pipeline YAML</td>
+ <td style="padding: 0.5rem; border: 1px solid #ddd;">Validated at runtime</td>
+ <td style="padding: 0.5rem; border: 1px solid #ddd;"><strong>Validated at save time</strong></td>
+ </tr>
+ <tr style="background: #f9f9f9;">
+ <td style="padding: 0.5rem; border: 1px solid #ddd;">Error handling syntax</td>
+ <td style="padding: 0.5rem; border: 1px solid #ddd;"><code>on_error: "skip"</code></td>
+ <td style="padding: 0.5rem; border: 1px solid #ddd;"><code>error_policy: skip</code></td>
+ </tr>
+ <tr>
+ <td style="padding: 0.5rem; border: 1px solid #ddd;">Job timeout</td>
+ <td style="padding: 0.5rem; border: 1px solid #ddd;">Default 8 hours</td>
+ <td style="padding: 0.5rem; border: 1px solid #ddd;"><strong>Default 2 hours</strong> (set <code>timeout: 480</code> for old behavior)</td>
+ </tr>
+ <tr style="background: #f9f9f9;">
+ <td style="padding: 0.5rem; border: 1px solid #ddd;">API v1</td>
+ <td style="padding: 0.5rem; border: 1px solid #ddd;">Fully supported</td>
+ <td style="padding: 0.5rem; border: 1px solid #ddd;"><strong>Removed entirely</strong></td>
+ </tr>
+</table>
+
+---
+
+<h2>Deprecations</h2>
+
+<ul>
+ <li><strong>Custom source connectors:</strong> Support ends December 1, 2024. Use native adapters instead.</li>
+ <li><strong>Dashboard v1:</strong> Old dashboard URL still works but shows deprecation banner. Migrate to Dashboard v2 by September 2025.</li>
+</ul>
+
+---
+
+<h2>How to Upgrade</h2>
+
+<div class="success">
+ <strong>For Most Users (5-10 minutes):</strong><br>
+ 1. Run auto-migration: <code>dataflow migrate --from v2 --to v3</code><br>
+ 2. Test your pipelines in staging<br>
+ 3. Deploy to production
+</div>
+
+<div class="note">
+ <strong>For Complex Pipelines:</strong> See <a href="migration-guide-v2-to-v3.html">DataFlow v2→v3 Migration Guide</a> for step-by-step instructions, troubleshooting, and testing checklist.
+</div>
+
+---
+
+<h2>Support</h2>
+
+<ul>
+ <li>📚 <a href="#">Full v3.0 API Reference</a></li>
+ <li>❓ <a href="#">FAQ: v2 to v3 Migration</a></li>
+ <li>💬 <a href="#">Community Slack Channel</a></li>
+ <li>📧 <a href="mailto:support@dataflow.io">support@dataflow.io</a> (24-hour response)</li>
+</ul>
+
+<p><em>Released by Anubhuti Shrivastava, Technical Writer. Last updated October 1, 2024.</em></p>
+
+</body>
+</html>
